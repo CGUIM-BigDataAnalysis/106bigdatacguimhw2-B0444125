@@ -1,7 +1,7 @@
 ---
 title: "106-2 大數據分析方法 作業二"
 output: github_document
-author: Yi-Ju Tseng
+author: 黃立玟
 ---
 
 作業完整說明[連結](https://docs.google.com/document/d/1aLGSsGXhgOVgwzSg9JdaNz2qGPQJSoupDAQownkGf_I/edit?usp=sharing)
@@ -19,8 +19,7 @@ author: Yi-Ju Tseng
 ### 哪些國家來台灣唸書的學生最多呢？ 
 ```{r ToTWNCountry}
 #這是R Code Chunk
-head(iris)
-knitr::kable(head(iris))
+
 library(knitr)
 kable(head(iris))
 ```
