@@ -14,24 +14,100 @@ author: 黃立玟
 ### 資料匯入與處理
 ```{r dataloadToTWN}
 #這是R Code Chunk
+
+#依照國家
+library(readr)
+X104 <- read_csv("~/Downloads/104.csv")
+View(X104)
+X104$各國人數加總104<-rowSums(X104[,3:11])
+X104new<-X104[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
+
+library(readr)
+X105 <- read_csv("~/Downloads/105.csv")
+View(X105)
+X105$各國人數加總105<-rowSums(X105[,3:11])
+X105new<-X105[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
+
+library(readr)
+X106<- read_csv("~/Downloads/106.csv")
+View(X106)
+X106$各國人數加總106<-rowSums(X106[,3:11])
+X106new<-X106[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
+
+#依照校別
+library(readr)
+X104school <- read_csv("~/Downloads/104school.csv")
+View(X104school)
+X104school$`非學位生-大陸研修生`<-gsub("…","0",X104school$`非學位生-大陸研修生`)
+X104school$`非學位生-大陸研修生`<-as.numeric(X104school$`非學位生-大陸研修生`)
+X104school$境外學生人數加總104<-rowSums(X104school[,4:12])
+X104schoolnew<-X104school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
+
+library(readr)
+X105school <- read_csv("~/Downloads/105school.csv")
+View(X105school)
+X105school$境外學生人數加總105<-rowSums(X105school[,4:12])
+X105schoolnew<-X105school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
+
+library(readr)
+X106school <- read_csv("~/Downloads/106school.csv")
+View(X106school)
+X106school$境外學生人數加總106<-rowSums(X106school[,4:12])
+X106schoolnew<-X106school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
+
+
+
 ```
 
 ### 哪些國家來台灣唸書的學生最多呢？ 
 ```{r ToTWNCountry}
 #這是R Code Chunk
 
-library(knitr)
-kable(head(iris))
+library(dplyr)
+J0405<-full_join(X104new,X105new,by=c("洲別","國別"))
+
+library(dplyr)
+J040506<-full_join(J0405,X106new,by=c("洲別","國別"))
+
+J040506$各國人數加總104<-as.numeric(J040506$各國人數加總104)
+J040506$各國人數加總105<-as.numeric(J040506$各國人數加總105)
+J040506$各國人數加總106<-as.numeric(J040506$各國人數加總106)
+
+J040506$三年度加總<-rowSums(J040506[,3:5],na.rm=TRUE)
+
+J040506<-J040506[order(J040506$三年度加總,decreasing = T),]
+J040506fin<-J040506[1:10,]
+knitr::kable(J040506fin)
 ```
 
 ### 哪間大學的境外生最多呢？
 ```{r ToTWNUniversity}
 #這是R Code Chunk
+
+library(dplyr)
+JS0405<-full_join(X104schoolnew,X105schoolnew,by=c("學校類型","學校代碼","學校名稱"))
+
+library(dplyr)
+JS040506<-full_join(JS0405,X106schoolnew,by=c("學校類型","學校代碼","學校名稱"))
+
+JS040506$三年度加總<-rowSums(JS040506[,4:6],na.rm=TRUE)
+
+JS040506<-JS040506[order(JS040506$三年度加總,decreasing = T),]
+JS040506fin<-JS040506[2:11,]
+knitr::kable(JS040506fin)
 ```
 
 ### 各個國家來台灣唸書的學生人數條狀圖
 ```{r ToTWNCountryBar}
 #這是R Code Chunk
+library(ggplot2)
+ggplot(data = J040506)+
+  geom_bar(aes(x=J040506$國別,y=J040506$三年度加總),
+           stat = "identity")+
+  labs(title="各個國家(全部)來台灣唸書的學生人數",
+       x="Country",
+       y="Number") +
+  theme_bw()
 ```
 
 ### 各個國家來台灣唸書的學生人數面量圖
@@ -44,11 +120,19 @@ kable(head(iris))
 ### 資料匯入與處理
 ```{r dataloadFromTWN}
 #這是R Code Chunk
+library(readxl)
+Student<- read_excel("~/Desktop/複製 - Student_RPT_07.xlsx")
+View(Student)
 ```
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流呢？
 ```{r FromTWNCountry}
 #這是R Code Chunk
+library(dplyr)
+Studentout<-group_by(Student,`對方學校(機構)國別(地區)`)%>%
+  summarise(各國總人數=sum(小計))
+Studentout1<-head(Studentout[order(Studentout$各國總人數,decreasing = T),],10)
+
 ```
 
 ### 哪間大學的出國交流學生數最多呢？
