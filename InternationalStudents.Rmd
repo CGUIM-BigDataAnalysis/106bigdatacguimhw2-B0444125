@@ -13,31 +13,27 @@ author: 黃立玟
 ## 來台境外生分析
 ### 資料匯入與處理
 ```{r dataloadToTWN}
-#這是R Code Chunk
 
-#依照國家
+
+
 library(readr)
 X104 <- read_csv("~/Downloads/104.csv")
-View(X104)
 X104$各國人數加總104<-rowSums(X104[,3:11])
 X104new<-X104[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
 
 library(readr)
 X105 <- read_csv("~/Downloads/105.csv")
-View(X105)
 X105$各國人數加總105<-rowSums(X105[,3:11])
 X105new<-X105[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
 
 library(readr)
 X106<- read_csv("~/Downloads/106.csv")
-View(X106)
 X106$各國人數加總106<-rowSums(X106[,3:11])
 X106new<-X106[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
 
 #依照校別
 library(readr)
 X104school <- read_csv("~/Downloads/104school.csv")
-View(X104school)
 X104school$`非學位生-大陸研修生`<-gsub("…","0",X104school$`非學位生-大陸研修生`)
 X104school$`非學位生-大陸研修生`<-as.numeric(X104school$`非學位生-大陸研修生`)
 X104school$境外學生人數加總104<-rowSums(X104school[,4:12])
@@ -45,13 +41,11 @@ X104schoolnew<-X104school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
 
 library(readr)
 X105school <- read_csv("~/Downloads/105school.csv")
-View(X105school)
 X105school$境外學生人數加總105<-rowSums(X105school[,4:12])
 X105schoolnew<-X105school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
 
 library(readr)
 X106school <- read_csv("~/Downloads/106school.csv")
-View(X106school)
 X106school$境外學生人數加總106<-rowSums(X106school[,4:12])
 X106schoolnew<-X106school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
 
@@ -122,7 +116,6 @@ ggplot(data = J040506)+
 #這是R Code Chunk
 library(readxl)
 Student<- read_excel("~/Desktop/複製 - Student_RPT_07.xlsx")
-View(Student)
 ```
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流呢？
