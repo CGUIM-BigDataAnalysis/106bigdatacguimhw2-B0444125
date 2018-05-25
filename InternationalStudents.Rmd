@@ -1,4 +1,5 @@
 ---
+always_allow_html: yes
 title: "106-2 大數據分析方法 作業二"
 output: github_document
 author: 黃立玟
@@ -13,23 +14,25 @@ author: 黃立玟
 ## 來台境外生分析
 ### 資料匯入與處理
 ```{r dataloadToTWN}
-
-
+#這是R Code Chunk
 
 library(readr)
 X104 <- read_csv("~/Downloads/104.csv")
 X104$各國人數加總104<-rowSums(X104[,3:11])
 X104new<-X104[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
 
+#---------------------------------------------
 library(readr)
 X105 <- read_csv("~/Downloads/105.csv")
 X105$各國人數加總105<-rowSums(X105[,3:11])
 X105new<-X105[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
 
+#---------------------------------------------
 library(readr)
 X106<- read_csv("~/Downloads/106.csv")
 X106$各國人數加總106<-rowSums(X106[,3:11])
 X106new<-X106[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
+
 
 #依照校別
 library(readr)
@@ -39,16 +42,19 @@ X104school$`非學位生-大陸研修生`<-as.numeric(X104school$`非學位生-�
 X104school$境外學生人數加總104<-rowSums(X104school[,4:12])
 X104schoolnew<-X104school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
 
+#----------------------------------------------------------------------------------
+
 library(readr)
 X105school <- read_csv("~/Downloads/105school.csv")
 X105school$境外學生人數加總105<-rowSums(X105school[,4:12])
 X105schoolnew<-X105school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
 
+#----------------------------------------------------------------------------------
+
 library(readr)
 X106school <- read_csv("~/Downloads/106school.csv")
 X106school$境外學生人數加總106<-rowSums(X106school[,4:12])
 X106schoolnew<-X106school[,c(T,T,T,F,F,F,F,F,F,F,F,F,T)]
-
 
 
 ```
@@ -98,16 +104,73 @@ library(ggplot2)
 ggplot(data = J040506)+
   geom_bar(aes(x=J040506$國別,y=J040506$三年度加總),
            stat = "identity")+
-  labs(title="各個國家(全部)來台灣唸書的學生人數",
-       x="Country",
-       y="Number") +
-  theme_bw()
+  labs(title="各國學生來台灣唸書總人數 ",
+       x="國家",
+       y="人數") +
+  theme_bw()+theme(text = element_text(family = "黑體-繁 中黑",size=10),
+                   axis.title.y = element_text(angle = 0),
+                   axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 
 ### 各個國家來台灣唸書的學生人數面量圖
 ```{r ToTWNCountryMap}
 #這是R Code Chunk
+library(jsonlite)
+library(RCurl)
+library(httr)
+Countryname<-fromJSON("https://gist.githubusercontent.com/jacobbubu/060d84c2bdf005d412db/raw/845c78f55e49fee89814bdc599355069f07b7ee6/countries.json")
+
+Countrychang<-Countryname[,c(F,T,F,F,F,F,T,F,F)]
+colnames(Countrychang)<-c("國家名稱縮寫", "國別")
+library(dplyr)
+J040506new<-left_join(J040506,Countrychang,by="國別")
+J040506new$國家名稱縮寫[1]<-("CHN")
+J040506new$國家名稱縮寫[8]<-("KOR")
+J040506new$國家名稱縮寫[12]<-("SGP")
+J040506new$國家名稱縮寫[30]<-("SAU")
+J040506new$國家名稱縮寫[45]<-("AUS")
+J040506new$國家名稱縮寫[47]<-("SLB")
+J040506new$國家名稱縮寫[49]<-("MHL")
+J040506new$國家名稱縮寫[50]<-("TUV")
+J040506new$國家名稱縮寫[53]<-("PNG")
+J040506new$國家名稱縮寫[55]<-("FSM")
+J040506new$國家名稱縮寫[80]<-("SLE")
+J040506new$國家名稱縮寫[83]<-("NAM")
+J040506new$國家名稱縮寫[92]<-("SOM")
+J040506new$國家名稱縮寫[115]<-("HRV")
+J040506new$國家名稱縮寫[123]<-("SRB")
+J040506new$國家名稱縮寫[124]<-("BIH")
+J040506new$國家名稱縮寫[126]<-("MLT")
+J040506new$國家名稱縮寫[129]<-("")
+J040506new$國家名稱縮寫[132]<-("HND")
+J040506new$國家名稱縮寫[144]<-("VCT")
+J040506new$國家名稱縮寫[149]<-("KNA")
+J040506new$國家名稱縮寫[156]<-("TTO")
+J040506new$國家名稱縮寫[160]<-("COD")
+J040506new$國家名稱縮寫[161]<-("")
+J040506new$國家名稱縮寫[169]<-("CYP")
+J040506new$國家名稱縮寫[172]<-("SSD")
+
+##互動式面量圖
+library(ggplot2)
+library(plotly)
+l <- list(color = toRGB("grey"), width = 0.8)
+g <- list(
+  showframe=FALSE,
+  showcountries=TRUE,
+  showcoastlines=TRUE,
+  coastlinecolor=toRGB("grey"),
+  countrycolor=toRGB("grey")) 
+
+p<-plot_ly(J040506, z=~`三年度加總`, text=~`國別`, locations=~`國別`, type= 'choropleth', 
+        color=~`三年度加總`, colors='Purples', marker = list(line = l)) %>%
+  layout(title='Numbers of All exchange students', geo=g)
+
+
+p
+
 ```
+![test](/Users/bellahuang/Desktop/abc.png)
 
 ## 台灣學生國際交流分析
 
@@ -125,41 +188,209 @@ library(dplyr)
 Studentout<-group_by(Student,`對方學校(機構)國別(地區)`)%>%
   summarise(各國總人數=sum(小計))
 Studentout1<-head(Studentout[order(Studentout$各國總人數,decreasing = T),],10)
-
+knitr::kable(Studentout1)
 ```
 
 ### 哪間大學的出國交流學生數最多呢？
 ```{r FromTWNUniversity}
 #這是R Code Chunk
+library(dplyr)
+Studentschool<-group_by(Student,學校名稱)%>%
+  summarise(各學校出國總人數=sum(小計))
+Studentschool1<-head(Studentschool[order(Studentschool$各學校出國總人數,decreasing = T),],10)
+knitr::kable(Studentschool1)
 ```
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流條狀圖
 ```{r FromTWNCountryBar}
 #這是R Code Chunk
+library(ggplot2)
+ggplot(data = Studentout)+
+  geom_bar(aes(x=Studentout$`對方學校(機構)國別(地區)`,y=Studentout$各國總人數),
+           stat = "identity")+
+  labs(title="台灣學生到各國唸書人數",
+       x="國家",
+       y="人數") +
+  theme_bw()+theme(text = element_text(family = "黑體-繁 中黑",size=10),
+                  axis.title.y = element_text(angle = 0),
+                  axis.text.x = element_text(angle = 60, hjust = 1))
+
+
 ```
 
 ### 台灣大專院校的學生最喜歡去哪些國家進修交流面量圖
 ```{r FromTWNCountryMap}
 #這是R Code Chunk
-```
+library(jsonlite)
+library(RCurl)
+library(httr)
+Countryname<-fromJSON("https://gist.githubusercontent.com/jacobbubu/060d84c2bdf005d412db/raw/845c78f55e49fee89814bdc599355069f07b7ee6/countries.json")
 
+Countrychang<-Countryname[,c(F,T,F,F,F,F,T,F,F)]
+colnames(Countrychang)<-c("國家名稱縮寫", "國別")
+colnames(Studentout)<-c("國別","各國總人數")
+library(dplyr)
+Studentoutnew<-left_join(Studentout,Countrychang,by="國別")
+
+Studentoutnew$國家名稱縮寫[1]<-("AFG")
+Studentoutnew$國家名稱縮寫[3]<-("OMN")
+Studentoutnew$國家名稱縮寫[5]<-("EGY")
+Studentoutnew$國家名稱縮寫[7]<-("IRL")
+Studentoutnew$國家名稱縮寫[9]<-("EST")
+Studentoutnew$國家名稱縮寫[11]<-("AUT")
+Studentoutnew$國家名稱縮寫[12]<-("AUS")
+Studentoutnew$國家名稱縮寫[15]<-("PAN")
+Studentoutnew$國家名稱縮寫[17]<-("BRA")
+Studentoutnew$國家名稱縮寫[18]<-("BLR")
+Studentoutnew$國家名稱縮寫[19]<-("KIR")
+Studentoutnew$國家名稱縮寫[23]<-("BEL")
+Studentoutnew$國家名稱縮寫[25]<-("ISL")
+Studentoutnew$國家名稱縮寫[27]<-("POL")
+Studentoutnew$國家名稱縮寫[28]<-("PLW")
+Studentoutnew$國家名稱縮寫[29]<-("KOR")
+Studentoutnew$國家名稱縮寫[30]<-("CHN")
+Studentoutnew$國家名稱縮寫[32]<-("DNK")
+Studentoutnew$國家名稱縮寫[34]<-("DEU")
+Studentoutnew$國家名稱縮寫[36]<-("RUS")
+Studentoutnew$國家名稱縮寫[38]<-("ECU")
+Studentoutnew$國家名稱縮寫[41]<-("PHL")
+Studentoutnew$國家名稱縮寫[42]<-("FJI")
+Studentoutnew$國家名稱縮寫[43]<-("FJI")
+Studentoutnew$國家名稱縮寫[45]<-("FIN")
+Studentoutnew$國家名稱縮寫[46]<-("GMB")
+Studentoutnew$國家名稱縮寫[49]<-("CRI")
+Studentoutnew$國家名稱縮寫[52]<-("NLD")
+Studentoutnew$國家名稱縮寫[55]<-("KHM")
+Studentoutnew$國家名稱縮寫[57]<-("CZE")
+Studentoutnew$國家名稱縮寫[59]<-("")
+Studentoutnew$國家名稱縮寫[61]<-("HRV")
+Studentoutnew$國家名稱縮寫[62]<-("HRV")
+Studentoutnew$國家名稱縮寫[64]<-("LVA")
+Studentoutnew$國家名稱縮寫[66]<-("LTU")
+Studentoutnew$國家名稱縮寫[68]<-("LIE")
+Studentoutnew$國家名稱縮寫[69]<-("LUX")
+Studentoutnew$國家名稱縮寫[71]<-("MLT")
+Studentoutnew$國家名稱縮寫[76]<-("MNG")
+Studentoutnew$國家名稱縮寫[79]<-("MMR")
+Studentoutnew$國家名稱縮寫[80]<-("MUS")
+Studentoutnew$國家名稱縮寫[82]<-("MAR")
+Studentoutnew$國家名稱縮寫[84]<-("MOZ")
+Studentoutnew$國家名稱縮寫[86]<-("MEX")
+Studentoutnew$國家名稱縮寫[88]<-("ZAF")
+Studentoutnew$國家名稱縮寫[89]<-("KOR")
+Studentoutnew$國家名稱縮寫[94]<-("NOR")
+Studentoutnew$國家名稱縮寫[96]<-("PRT")
+Studentoutnew$國家名稱縮寫[99]<-("SWE")
+Studentoutnew$國家名稱縮寫[101]<-("SRB")
+Studentoutnew$國家名稱縮寫[102]<-("SYC")
+Studentoutnew$國家名稱縮寫[104]<-("SAU")
+Studentoutnew$國家名稱縮寫[106]<-("STP")
+Studentoutnew$國家名稱縮寫[108]<-("SWZ")
+Studentoutnew$國家名稱縮寫[110]<-("LKA")
+Studentoutnew$國家名稱縮寫[112]<-("SVK")
+Studentoutnew$國家名稱縮寫[114]<-("SVN")
+Studentoutnew$國家名稱縮寫[115]<-("SLB")
+Studentoutnew$國家名稱縮寫[117]<-("THA")
+Studentoutnew$國家名稱縮寫[119]<-("TUN")
+Studentoutnew$國家名稱縮寫[121]<-("TUR")
+Studentoutnew$國家名稱縮寫[123]<-("BRN")
+Studentoutnew$國家名稱縮寫[125]<-("ESP")
+Studentoutnew$國家名稱縮寫[127]<-("GRC")
+Studentoutnew$國家名稱縮寫[129]<-("SGP")
+Studentoutnew$國家名稱縮寫[130]<-("SGP")
+Studentoutnew$國家名稱縮寫[132]<-("HUN")
+Studentoutnew$國家名稱縮寫[134]<-("IRN")
+Studentoutnew$國家名稱縮寫[137]<-("ITA")
+Studentoutnew$國家名稱縮寫[139]<-("IND")
+Studentoutnew$國家名稱縮寫[140]<-("IDN")
+Studentoutnew$國家名稱縮寫[144]<-("JOR")
+Studentoutnew$國家名稱縮寫[146]<-("VNM")
+Studentoutnew$國家名稱縮寫[148]<-("CHN")
+
+
+library(ggplot2)
+library(plotly)
+a<- list(color = toRGB("grey"), width = 0.8)
+b<- list(
+  showframe=FALSE,
+  showcountries=TRUE,
+  showcoastlines=TRUE,
+  coastlinecolor=toRGB("grey"),
+  countrycolor=toRGB("grey"))
+
+
+##互動式面量圖
+
+q<-plot_ly(Studentoutnew, z=~`各國總人數`, text=~`國家名稱縮寫`, locations=~`國家名稱縮寫`, type= 'choropleth', 
+        color=~`各國總人數`, colors='Blues', marker = list(line = a)) %>%
+  layout(title='Number of Taiwanese students studying in other countries ', geo=b)
+q
+```
+![test](/Users/bellahuang/Desktop/bbb.png)
 ## 台灣學生出國留學分析
 
 ### 資料匯入與處理
 ```{r dataloadFromTWNAb}
 #這是R Code Chunk
+
+library(readr)
+Worldstudents<- read_csv("~/Downloads/世界各主要國家之我國留學生人數統計表.csv")
+
 ```
 
 ### 台灣學生最喜歡去哪些國家留學呢？
 ```{r FromTWNAb}
 #這是R Code Chunk
+
+Worldstudents$總人數
+Worldstudentstop<-Worldstudents[order(Worldstudents$總人數,decreasing = T),]
+Worldstudentstop10<-Worldstudentstop[1:10,]
+knitr::kable(Worldstudentstop10)
+
 ```
 
 ### 台灣學生最喜歡去哪些國家留學面量圖
 ```{r FromTWNAbMap}
 #這是R Code Chunk
-```
 
+library(jsonlite)
+library(RCurl)
+library(httr)
+Countryname<-fromJSON("https://gist.githubusercontent.com/jacobbubu/060d84c2bdf005d412db/raw/845c78f55e49fee89814bdc599355069f07b7ee6/countries.json")
+
+
+Countrychang<-Countryname[,c(F,T,F,F,F,F,T,F,F)]
+colnames(Countrychang)<-c("國家名稱縮寫", "國別")
+
+library(dplyr)
+Worldstudentstop<-left_join(Worldstudentstop,Countrychang,by="國別")
+
+Worldstudentstop$國家名稱縮寫[2]<-("AUS")
+Worldstudentstop$國家名稱縮寫[13]<-("KOR")
+Worldstudentstop$國家名稱縮寫[26]<-("SGP")
+
+
+
+library(ggplot2)
+library(plotly)
+c<- list(color = toRGB("grey"), width = 0.8)
+d<- list(
+  showframe=FALSE,
+  showcountries=TRUE,
+  showcoastlines=TRUE,
+  coastlinecolor=toRGB("grey"),
+  countrycolor=toRGB("grey"))
+
+
+##互動式面量圖
+
+r<-plot_ly(Worldstudentstop, z=~`總人數`, text=~`國家名稱縮寫`, locations=~`國家名稱縮寫`, type= 'choropleth', 
+        color=~`總人數`, colors='Reds', marker = list(line = c)) %>%
+  layout(title='Number of Taiwanese students study abroad', geo=d)
+
+r
+```
+![test](/Users/bellahuang/Desktop/ccc.png)
 ## 綜合分析
 
 請問來台讀書與離台讀書的來源國與留學國趨勢是否相同(5分)？想來台灣唸書的境外生，他們的母國也有很多台籍生嗎？請圖文並茂說明你的觀察(10分)。
