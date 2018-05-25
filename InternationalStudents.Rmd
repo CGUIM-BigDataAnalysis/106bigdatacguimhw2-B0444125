@@ -80,6 +80,8 @@ J040506fin<-J040506[1:10,]
 knitr::kable(J040506fin)
 ```
 
+取出前十名
+
 ### 哪間大學的境外生最多呢？
 ```{r ToTWNUniversity}
 #這是R Code Chunk
