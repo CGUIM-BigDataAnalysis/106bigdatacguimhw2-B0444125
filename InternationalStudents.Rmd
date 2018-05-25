@@ -396,3 +396,29 @@ r
 ## 綜合分析
 
 請問來台讀書與離台讀書的來源國與留學國趨勢是否相同(5分)？想來台灣唸書的境外生，他們的母國也有很多台籍生嗎？請圖文並茂說明你的觀察(10分)。
+```{r}
+library(dplyr)
+inout<-full_join(J040506,Studentout,by="國別")
+colnames(inout)<-c("洲別","國別","104年度來台灣的外國生","105年度來台灣的外國生","106年度來台灣的外國生",
+                   "前三年度來台灣的外國生","台灣學生去各國的總數")
+
+library(ggplot2)
+ggplot(inout, 
+       aes(x = 國別, y = 前三年度來台灣的外國生)) + 
+  geom_point()+
+  theme_bw()+
+  theme(text = element_text(family = "黑體-繁 中黑",size=10),
+        axis.title.y = element_text(angle = 0),
+        axis.text.x = element_text(angle = 60, hjust = 1))
+
+
+library(ggplot2)
+ggplot(inout, 
+       aes(x = 國別, y = 台灣學生去各國的總數)) + 
+  geom_point()+
+  theme_bw()+
+  theme(text = element_text(family = "黑體-繁 中黑",size=10),
+        axis.title.y = element_text(angle = 0),
+        axis.text.x = element_text(angle = 60, hjust = 1))
+
+```
