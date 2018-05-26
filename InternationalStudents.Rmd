@@ -16,7 +16,7 @@ author: 黃立玟
 ```{r dataloadToTWN}
 #這是R Code Chunk
 
-##依照國家分類
+##依照國別
 library(readr)
 X104 <- read_csv("~/Downloads/104.csv")
 X104$各國人數加總104<-rowSums(X104[,3:11])
@@ -35,7 +35,7 @@ X106$各國人數加總106<-rowSums(X106[,3:11])
 X106new<-X106[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
 
 
-#依照校別分類
+#依照校別
 library(readr)
 X104school <- read_csv("~/Downloads/104school.csv")
 X104school$`非學位生-大陸研修生`<-gsub("…","0",X104school$`非學位生-大陸研修生`)
