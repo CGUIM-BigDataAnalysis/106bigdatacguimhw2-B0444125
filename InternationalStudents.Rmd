@@ -16,6 +16,7 @@ author: 黃立玟
 ```{r dataloadToTWN}
 #這是R Code Chunk
 
+##依照國家分類
 library(readr)
 X104 <- read_csv("~/Downloads/104.csv")
 X104$各國人數加總104<-rowSums(X104[,3:11])
@@ -34,7 +35,7 @@ X106$各國人數加總106<-rowSums(X106[,3:11])
 X106new<-X106[,c(T,T,F,F,F,F,F,F,F,F,F,T)]
 
 
-#依照校別
+#依照校別分類
 library(readr)
 X104school <- read_csv("~/Downloads/104school.csv")
 X104school$`非學位生-大陸研修生`<-gsub("…","0",X104school$`非學位生-大陸研修生`)
@@ -126,6 +127,7 @@ Countrychang<-Countryname[,c(F,T,F,F,F,F,T,F,F)]
 colnames(Countrychang)<-c("國家名稱縮寫", "國別")
 library(dplyr)
 J040506new<-left_join(J040506,Countrychang,by="國別")
+
 J040506new$國家名稱縮寫[1]<-("CHN")
 J040506new$國家名稱縮寫[8]<-("KOR")
 J040506new$國家名稱縮寫[12]<-("SGP")
@@ -216,7 +218,6 @@ ggplot(data = Studentout)+
   theme_bw()+theme(text = element_text(family = "黑體-繁 中黑",size=10),
                   axis.title.y = element_text(angle = 0),
                   axis.text.x = element_text(angle = 60, hjust = 1))
-
 
 ```
 
@@ -393,32 +394,37 @@ r<-plot_ly(Worldstudentstop, z=~`總人數`, text=~`國家名稱縮寫`, locatio
 r
 ```
 ![test](/Users/bellahuang/Documents/GitHub/106bigdatacguimhw2-B0444125/ccc.png)
+
 ## 綜合分析
 
 請問來台讀書與離台讀書的來源國與留學國趨勢是否相同(5分)？想來台灣唸書的境外生，他們的母國也有很多台籍生嗎？請圖文並茂說明你的觀察(10分)。
 ```{r}
-library(dplyr)
-inout<-full_join(J040506,Studentout,by="國別")
-colnames(inout)<-c("洲別","國別","104年度來台灣的外國生","105年度來台灣的外國生","106年度來台灣的外國生",
-                   "前三年度來台灣的外國生","台灣學生去各國的總數")
-
 library(ggplot2)
-ggplot(inout, 
-       aes(x = 國別, y = 前三年度來台灣的外國生)) + 
+ggplot(J040506fin, 
+       aes(x = 國別, y = 三年度加總)) + 
   geom_point()+
+  labs(title="從國外來台唸書學生人數前十名",
+       x="國家",
+       y="人數")+
   theme_bw()+
   theme(text = element_text(family = "黑體-繁 中黑",size=10),
         axis.title.y = element_text(angle = 0),
-        axis.text.x = element_text(angle = 60, hjust = 1))
+        axis.text.x = element_text(angle = 40, hjust = 1))
 
 
 library(ggplot2)
-ggplot(inout, 
-       aes(x = 國別, y = 台灣學生去各國的總數)) + 
+ggplot(Studentout1, 
+       aes(x = `對方學校(機構)國別(地區)`, y = 各國總人數)) + 
   geom_point()+
+  labs(title="台唸學生去各國唸書人數前十名",
+       x="國家",
+       y="人數")+
   theme_bw()+
   theme(text = element_text(family = "黑體-繁 中黑",size=10),
         axis.title.y = element_text(angle = 0),
-        axis.text.x = element_text(angle = 60, hjust = 1))
-
+        axis.text.x = element_text(angle = 40, hjust = 1))
 ```
+
+
+來台讀書與離台讀書的來源國與留學國趨勢不太相同。藉由取出各前十名做圖形分析，來與去都為中國大陸，而之後的都不太相同。來台灣唸書的多半是亞洲地區的學生，我推斷有可能是因為文化、地理位置及語言都較為相近的關係，才會選擇台灣。而台灣學生去的國家分別都為亞洲、歐洲及美洲居多，有可能是因為台灣學生普遍都覺得台灣教育不像國外更有視野及國際觀，所以很多都希望能出去唸書，或是一部份為台灣起薪低的緣故，導致學生希望能出國獲得更高學歷，也更容易找份工作。
+
