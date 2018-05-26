@@ -174,7 +174,7 @@ p<-plot_ly(J040506, z=~`三年度加總`, text=~`國別`, locations=~`國別`, t
 p
 
 ```
-![test](/Users/bellahuang/Documents/GitHub/106bigdatacguimhw2-B0444125/abc.png)
+![test](https://github.com/CGUIM-BigDataAnalysis/106bigdatacguimhw2-B0444125/blob/master/abc.png)
 
 ## 台灣學生國際交流分析
 
@@ -329,7 +329,7 @@ q<-plot_ly(Studentoutnew, z=~`各國總人數`, text=~`國家名稱縮寫`, loca
   layout(title='Number of Taiwanese students studying in other countries ', geo=b)
 q
 ```
-![test](/Users/bellahuang/Documents/GitHub/106bigdatacguimhw2-B0444125/bbb.png)
+![test](https://github.com/CGUIM-BigDataAnalysis/106bigdatacguimhw2-B0444125/blob/master/bbb.png)
 ## 台灣學生出國留學分析
 
 ### 資料匯入與處理
@@ -393,7 +393,7 @@ r<-plot_ly(Worldstudentstop, z=~`總人數`, text=~`國家名稱縮寫`, locatio
 
 r
 ```
-![test](/Users/bellahuang/Documents/GitHub/106bigdatacguimhw2-B0444125/ccc.png)
+![test](https://github.com/CGUIM-BigDataAnalysis/106bigdatacguimhw2-B0444125/blob/master/ccc.png)
 
 ## 綜合分析
 
